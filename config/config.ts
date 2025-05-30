@@ -15,6 +15,11 @@ export default defineConfig({
       redirect: '/home',
     },
     {
+      path: '/home',
+      component: './Home',
+      layout: false,
+    },
+    {
       path: '/landingpage',
       component: './LandingPage',
       layout: false,
@@ -26,4 +31,10 @@ export default defineConfig({
     },
   ],
   npmClient: 'yarn',
+  proxy: {
+    '/api': {
+      target: 'http://localhost:3000/',
+      changeOrigin: true,
+    },
+  },
 });
