@@ -20,19 +20,21 @@ export class NotesDataModel {
     makeAutoObservable(this);
     makePersistable(this, {
       name: 'notesData',
-      properties: ['notes'],
+      properties: ['notes', 'categories', 'isSync'],
       storage: window.localStorage,
     }).then(
       action((persistStore) => {
         // persist 完成的回调，在这里可以执行一些拿到数据后需要执行的操作，如果在页面上要判断是否完成persist，使用 isHydrated
-        console.log(persistStore, 'persistStore');
+        console.log(persistStore, 'persistStore', this.isSync);
       }),
     );
   }
 
   init() {
-    this.getNotes();
-    this.getCategories();
+    if (!this.isSync) {
+      this.getNotes();
+      this.getCategories();
+    }
   }
 
   async getNotes() {
@@ -40,6 +42,7 @@ export class NotesDataModel {
       const data = await getNotes();
       if (data) {
         this.notes = data;
+        this.isSync = true;
       }
     } catch (err) {
       console.log('err', err);
@@ -104,4 +107,6 @@ export class NotesDataModel {
   categories: Category[] = [];
 
   activeNoteId: string = '';
+
+  isSync: boolean = false;
 }
