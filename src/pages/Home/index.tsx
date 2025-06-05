@@ -49,7 +49,7 @@ const NoteLists = observer(() => {
               }}
               onClick={() => handleSelect(item)}
             >
-              <div>{item.id}</div>
+              <div>{item.name}</div>
             </div>
           </Dropdown>
         );
@@ -78,10 +78,10 @@ const HomePage: React.FC = () => {
 
   const handleSync = useCallback(async () => {
     try {
-      const { notes, categories } = model;
-      if (notes && categories) {
+      const { notes } = model;
+      if (notes) {
         setLoading(true);
-        await syncData(notes, categories);
+        await syncData(notes);
         setLoading(false);
         message.success('同步成功！');
       }

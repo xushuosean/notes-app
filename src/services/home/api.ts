@@ -6,12 +6,11 @@ export const login = async () => {
   });
 };
 
-export const syncData = async (notes: any, categories: any) => {
+export const syncData = async (notes: any) => {
   return await request('/api/sync', {
     method: 'post',
     data: {
       notes,
-      categories,
     },
   });
 };

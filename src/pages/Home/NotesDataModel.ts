@@ -1,4 +1,4 @@
-import { getCategories, getNotes } from '@/services/home/api';
+import { getNotes } from '@/services/home/api';
 import { action, makeAutoObservable } from 'mobx';
 import { makePersistable } from 'mobx-persist-store';
 import moment from 'moment';
@@ -6,7 +6,8 @@ import { v4 } from 'uuid';
 
 export type NoteData = {
   id: string;
-  text: string;
+  name: string;
+  content: string;
   category: '';
   favorite: boolean;
   created: string;
@@ -20,7 +21,7 @@ export class NotesDataModel {
     makeAutoObservable(this);
     makePersistable(this, {
       name: 'notesData',
-      properties: ['notes', 'categories', 'isSync'],
+      properties: ['notes', 'isSync'],
       storage: window.localStorage,
     }).then(
       action((persistStore) => {
@@ -33,7 +34,6 @@ export class NotesDataModel {
   init() {
     if (!this.isSync) {
       this.getNotes();
-      this.getCategories();
     }
   }
 
@@ -43,17 +43,6 @@ export class NotesDataModel {
       if (data) {
         this.notes = data;
         this.isSync = true;
-      }
-    } catch (err) {
-      console.log('err', err);
-    }
-  }
-
-  async getCategories() {
-    try {
-      const data = await getCategories();
-      if (data) {
-        this.categories = data;
       }
     } catch (err) {
       console.log('err', err);
@@ -72,7 +61,7 @@ export class NotesDataModel {
     const targetNote = this.notes.find((note) => note.id === id);
     if (!targetNote) return;
 
-    targetNote.text = content;
+    targetNote.content = content;
 
     this.updateLastUpdateTimeById(id);
   }
@@ -87,7 +76,8 @@ export class NotesDataModel {
   addNotes() {
     const newNote: NoteData = {
       id: v4(),
-      text: '',
+      name: '',
+      content: '',
       category: '',
       favorite: false,
       created: moment().format('YYYY-MM-DD HH:mm:ss'),
@@ -104,7 +94,6 @@ export class NotesDataModel {
   }
 
   notes: NoteData[] = [];
-  categories: Category[] = [];
 
   activeNoteId: string = '';
 
