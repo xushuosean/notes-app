@@ -92,6 +92,15 @@ const HomePage: React.FC = () => {
     }
   }, [model]);
 
+  const handlePullContent = useCallback(() => {
+    try {
+      model.getNotes();
+    } catch (err) {
+      message.error('获取失败！');
+      console.log(err);
+    }
+  }, [model]);
+
   const handleAddNote = useCallback(() => {
     model.addNotes();
   }, [model]);
@@ -113,6 +122,8 @@ const HomePage: React.FC = () => {
             ) : (
               <SyncOutlined onClick={handleSync} />
             )}
+
+            <div onClick={handlePullContent}>使用github内容覆盖</div>
           </div>
         </SplitPane>
       </SplitPane>
