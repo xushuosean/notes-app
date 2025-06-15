@@ -1,62 +1,14 @@
 import { login, syncData } from '@/services/home/api';
 import { LoadingOutlined, SyncOutlined } from '@ant-design/icons';
-import { Button, Dropdown, MenuProps, message } from 'antd';
+import { message } from 'antd';
 import { observer } from 'mobx-react-lite';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import SplitPane from 'react-split-pane';
 import { Detail } from './Detail';
-import { DataModelProvider, useDataModel } from './hooks';
-import { NoteData, NotesDataModel } from './NotesDataModel';
-
-const NoteLists = observer(() => {
-  const model = useDataModel();
-  if (!model) return <></>;
-
-  const handleSelect = useCallback(
-    (item: NoteData) => {
-      model.setActiveNoteId(item.id);
-    },
-    [model],
-  );
-
-  const items: MenuProps['items'] = [
-    {
-      label: '删除',
-      key: 'delete',
-    },
-  ];
-
-  return (
-    <div>
-      {model.notes.map((item) => {
-        console.log(item);
-        return (
-          <Dropdown
-            key={item.id}
-            menu={{
-              items,
-              onClick: (info) => {
-                if (info.key === 'delete') {
-                  model.deleteNotes(item.id);
-                }
-              },
-            }}
-            trigger={['contextMenu']}
-          >
-            <div
-              style={{
-                background: model.activeNoteId === item.id ? 'red' : '#fff',
-              }}
-              onClick={() => handleSelect(item)}
-            >
-              <div>{item.name}</div>
-            </div>
-          </Dropdown>
-        );
-      })}
-    </div>
-  );
-});
+import { DataModelProvider } from './hooks';
+import NoteList from './NoteList';
+import { NotesDataModel } from './NotesDataModel';
+import SideBar from './SideBar';
 
 const HomePage: React.FC = () => {
   const model = useMemo(() => {
@@ -101,20 +53,12 @@ const HomePage: React.FC = () => {
     }
   }, [model]);
 
-  const handleAddNote = useCallback(() => {
-    model.addNotes();
-  }, [model]);
-
   return (
     <DataModelProvider value={{ value: model }}>
-      <SplitPane split="vertical" minSize={200}>
-        <div>
-          <Button onClick={handleAddNote}>新增note</Button>
-        </div>
-        <SplitPane split="vertical" minSize={200}>
-          <div>
-            <NoteLists />
-          </div>
+      <SplitPane split="vertical" minSize={255}>
+        <SideBar />
+        <SplitPane split="vertical" minSize={320}>
+          <NoteList />
           <div>
             <Detail />
             {loading ? (
